@@ -35,7 +35,7 @@ export default class App {
        this.scene.background = new THREE.Color( 0xffffff );
 
        //initialiser la caméra
-       this.camera = new THREE.PerspectiveCamera(70, width/height, 0.01, 2)
+       this.camera = new THREE.PerspectiveCamera(50, width/height, 0.1, 2)
        // placer la caméra
        this.camera.position.z = 1
        // ajouter la caméra à la scène
@@ -49,10 +49,22 @@ export default class App {
        // ajouter l'objet à la scène
        this.scene.add( this.kernel )
 
-       let cage_shape = new THREE.IcosahedronGeometry(0.2)
+       let cage_shape = new THREE.IcosahedronGeometry(0.2, 1)
        let cage_material = new THREE.MeshBasicMaterial({color: 0xFC9D9A, wireframe: true})
        this.cage = new THREE.Mesh( cage_shape, cage_material )
        this.scene.add( this.cage )
+
+    //    let particles_shape = new THREE.DodecahedronGeometry(0.1)
+    //    let particles_material = new THREE.MeshBasicMaterial({color:0x355D7C})
+
+        for (var i = 0; i < 300; i++) {
+            console.log('test particles');
+            let particles_shape = new THREE.TetrahedronGeometry(0.005)
+            let particles_material = new THREE.MeshBasicMaterial({color:0x355D7C})
+            this.particles = new THREE.Mesh( particles_shape, particles_material )
+            this.particles.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+            this.scene.add( this.particles )
+        }
 
        // initialiser la lumière directionnelle
        this.directionalLight = new THREE.DirectionalLight(0xffffff, 1)
@@ -71,16 +83,19 @@ export default class App {
 
     render() {
 
-      this.kernel.scale.x =  1 + ((this.audio.frequencyDataArray[40]/ 255)*2)
-      this.kernel.scale.y =  1 + ((this.audio.frequencyDataArray[40] / 255)*2)
-      this.kernel.scale.z =  1 + ((this.audio.frequencyDataArray[40] / 255)*2)
       this.kernel.rotation.x += 0.005
       this.kernel.rotation.y += 0.005
+      this.kernel.scale.x =  1 + ((this.audio.frequencyDataArray[40]/ 255)*3)
+      this.kernel.scale.y =  1 + ((this.audio.frequencyDataArray[40] / 255)*3)
+      this.kernel.scale.z =  1 + ((this.audio.frequencyDataArray[40] / 255)*3)
       this.cage.rotation.x += 0.005
       this.cage.rotation.y += 0.002
-      this.cage.scale.x =  1 + (this.audio.frequencyDataArray[100]/ 255)
-      this.cage.scale.y =  1 + (this.audio.frequencyDataArray[100] / 255)
-      this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100] / 255)
+      this.cage.scale.x =  1 + (this.audio.frequencyDataArray[170]/ 255)
+      this.cage.scale.y =  1 + (this.audio.frequencyDataArray[170] / 255)
+      this.cage.scale.z =  1 + (this.audio.frequencyDataArray[170] / 255)
+      this.particles.rotation.x += 0.0000;
+      this.particles.rotation.y -= 0.0040;
+      this.renderer.clear();
       // on fait le rendu de la scène
       this.renderer.render( this.scene, this.camera )
 
