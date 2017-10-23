@@ -1,7 +1,7 @@
 import Sound from './Sound';
-import texture4 from '../sources/img/texture4.jpg';
-import texture3 from '../sources/img/texture3.jpg';
-import yellowclaw from '../sources/sounds/yellowclaw.mp3';
+import texture4 from './../sources/img/texture4.jpg';
+import texture3 from './../sources/img/texture3.jpg';
+import sweetdreams from './../sources/sounds/sweetdreams.mp3';
 import OrbitControls from 'three/examples/js/controls/OrbitControls';
 
 // TODO : add Dat.GUI
@@ -13,6 +13,17 @@ let width = window.innerWidth,
 export default class App {
 
     constructor() {
+
+        this.audio = new Sound( sweetdreams, 102, .3, () => {
+          this.audio.play()
+        }, true )
+        this.kick = this.audio.createKick({
+          decay: 1,
+          threshold: 0.5,
+          onKick: () => {},
+          offKick: () => {}
+        })
+        this.kick.on()
 
           // initialiser le moteur de rendu
        this.renderer = new THREE.WebGLRenderer()
@@ -56,38 +67,23 @@ export default class App {
        OrbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
        this.renderer.animate( this.render.bind(this) );
-
-       this.audio = new Sound( yellowclaw, 102, .3, null, true )
-       this.kick = this.audio.createKick({
-         decay: 1,
-         threshold: 0.5,
-         onKick: () => {console.log('KICK');},
-         offKick: () => {console.log('NO KICK');}
-       })
-       this.kick.on()
-
-       this.beat = this.audio.createBeat(4, () => {console.log('Beat!')})
-       this.beat.on()
-       this.audio._load(yellowclaw, () => {
-         this.audio.play()
-       });
-
     }
 
     render() {
 
-      // console.log(this.audio);
-      //
-      // this.kernel.scale.x =  1 + (this.audio.getSpectrum()/ 255)
-      // this.kernel.scale.y =  1 + (this.audio.getSpectrum() / 255)
-
-      // requestAnimationFrame( this.renderBind )
-      this.kernel.rotation.x += 0.002
+      this.kernel.scale.x =  1 + ((this.audio.frequencyDataArray[40]/ 255)*2)
+      this.kernel.scale.y =  1 + ((this.audio.frequencyDataArray[40] / 255)*2)
+      this.kernel.scale.z =  1 + ((this.audio.frequencyDataArray[40] / 255)*2)
+      this.kernel.rotation.x += 0.005
       this.kernel.rotation.y += 0.005
       this.cage.rotation.x += 0.005
       this.cage.rotation.y += 0.002
+      this.cage.scale.x =  1 + (this.audio.frequencyDataArray[100]/ 255)
+      this.cage.scale.y =  1 + (this.audio.frequencyDataArray[100] / 255)
+      this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100] / 255)
       // on fait le rendu de la scène
       this.renderer.render( this.scene, this.camera )
+
     }
 
 }
