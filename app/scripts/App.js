@@ -1,49 +1,60 @@
-// example import asset
-// import imgPath from './assets/img.jpg';
+import texture4 from '../sources/img/texture4.jpg';
 
 // TODO : add Dat.GUI
 // TODO : add Stats
+
+let width = window.innerWidth,
+    height = window.innerHeight
 
 export default class App {
 
     constructor() {
 
-        this.container = document.querySelector( '#main' );
-    	document.body.appendChild( this.container );
+      console.log(this);
+          // initialiser le moteur de rendu
+       this.renderer = new THREE.WebGLRenderer()
+       this.renderer.setSize(width, height)
+       document.getElementById('main').appendChild(this.renderer.domElement)
 
-        this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10 );
-        this.camera.position.z = 1;
+       // initialiser la scène
+       this.scene = new THREE.Scene()
+       this.scene.background = new THREE.Color( 0xffffff );
 
-    	this.scene = new THREE.Scene();
+       //initialiser la caméra
+       this.camera = new THREE.PerspectiveCamera(70, width/height, 0.01, 2)
+       // placer la caméra
+       this.camera.position.z = 1
+       // ajouter la caméra à la scène
+       this.scene.add(this.camera)
 
-        let geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
-	    let material = new THREE.MeshNormalMaterial();
-    	this.mesh = new THREE.Mesh( geometry, material );
-    	this.scene.add( this.mesh );
+       let kernel_shape = new THREE.SphereGeometry(0.05,50, 50)
+       let textureLoader = new THREE.TextureLoader();
+       let kernel_texture = textureLoader.load(texture4)
+       console.log(texture4);
+       let kernel_material = new THREE.MeshBasicMaterial({color: 0xF9CDAD, emissive: 0x000000, map: kernel_texture})
+       this.kernel = new THREE.Mesh( kernel_shape, kernel_material )
+       // ajouter l'objet à la scène
+       this.scene.add( this.kernel )
 
-    	this.renderer = new THREE.WebGLRenderer( { antialias: true } );
-    	this.renderer.setPixelRatio( window.devicePixelRatio );
-    	this.renderer.setSize( window.innerWidth, window.innerHeight );
-    	this.container.appendChild( this.renderer.domElement );
+       // initialiser la lumière directionnelle
+       this.directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+       this.directionalLight.position.set( 200, 100, 200 )
+       // ajouter la lumière à la scène
+       this.scene.add( this.directionalLight )
 
-    	window.addEventListener('resize', this.onWindowResize.bind(this), false);
-        this.onWindowResize();
+       this.renderBind = this.render.bind(this);
+       this.renderBind();
 
         this.renderer.animate( this.render.bind(this) );
     }
 
     render() {
 
-        this.mesh.rotation.x += 0.01;
-        this.mesh.rotation.y += 0.02;
-
-    	this.renderer.render( this.scene, this.camera );
+      // requestAnimationFrame( this.renderBind )
+      this.kernel.rotation.x += 0.002
+      this.kernel.rotation.y += 0.005
+      // on fait le rendu de la scène
+      this.renderer.render( this.scene, this.camera )
     }
 
-    onWindowResize() {
-
-    	this.camera.aspect = window.innerWidth / window.innerHeight;
-    	this.camera.updateProjectionMatrix();
-    	this.renderer.setSize( window.innerWidth, window.innerHeight );
-    }
 }
