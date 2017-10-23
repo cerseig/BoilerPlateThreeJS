@@ -57,19 +57,29 @@ export default class App {
 
        this.renderer.animate( this.render.bind(this) );
 
-       this.audio = new Sound( yellowclaw, 102, .3, () => {
-         this.audio.play()
-       }, true )
-       this.kick = this.audio.createKick(50, 0.5, 50, () => {console.log('Kick!')}, () => {console.log('No kick')} )
+       this.audio = new Sound( yellowclaw, 102, .3, null, true )
+       this.kick = this.audio.createKick({
+         decay: 1,
+         threshold: 0.5,
+         onKick: () => {console.log('KICK');},
+         offKick: () => {console.log('NO KICK');}
+       })
        this.kick.on()
+
+       this.beat = this.audio.createBeat(4, () => {console.log('Beat!')})
+       this.beat.on()
+       this.audio._load(yellowclaw, () => {
+         this.audio.play()
+       });
 
     }
 
     render() {
 
-      // this.audio.analyserNode.getSpectrum()
-      // this.kernel.scale.x =  1 + (frequencyDataArray[0] / 255)
-      // this.kernel.scale.y =  1 + (frequencyDataArray[0] / 255)
+      // console.log(this.audio);
+      //
+      // this.kernel.scale.x =  1 + (this.audio.getSpectrum()/ 255)
+      // this.kernel.scale.y =  1 + (this.audio.getSpectrum() / 255)
 
       // requestAnimationFrame( this.renderBind )
       this.kernel.rotation.x += 0.002
