@@ -13,7 +13,7 @@ let width = window.innerWidth,
     height = window.innerHeight,
     meteors_array = [],
     meteors_nb = 300,
-    meteor_position = 0,
+    meteors_position = [],
     orbit = new THREE.Group()
 
 
@@ -57,7 +57,7 @@ export default class App {
        // ajouter l'objet à la scène
        this.scene.add( this.kernel )
 
-       let cage_shape = new THREE.IcosahedronGeometry(0.15, 1)
+       let cage_shape = new THREE.IcosahedronGeometry(0.12, 1)
        let cage_material = new THREE.MeshBasicMaterial({color: 0xf2d7dd, wireframe: true})
        this.cage = new THREE.Mesh( cage_shape, cage_material )
        this.scene.add( this.cage )
@@ -68,11 +68,10 @@ export default class App {
           this.meteors = new THREE.Mesh( meteors_shape, meteors_material )
           let random = Math.random() * Math.PI * 2
           this.meteors.position.set(Math.cos(random) * (0.2 + Math.random() * 0.25), Math.random()*(0.05 - 0) - 0.025, Math.sin(random) * (0.2 + Math.random() * 0.25))
-          meteor_position
           orbit.add( this.meteors );
           this.scene.add( orbit );
-          // this.scene.add( this.meteors )
           meteors_array.push( this.meteors )
+          meteors_position.push(this.meteors.position.y)
         }
 
         this.audio = new Sound( sweetdreams, 102, .3, () => {
@@ -121,8 +120,15 @@ export default class App {
       this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100, 150] / 255)
       orbit.rotation.y += 0.002
 
-      for (let i = 0; i < meteors_array.length; i++) {
-        meteors_array[i].position.y = this.audio.frequencyDataArray[40]/255 + meteor_position
+      let topMeteors = meteors_array.slice(0, 99)
+      let middleMeteors = meteors_array.slice(100, 199)
+      let bottomMeteors = meteors_array.slice(200, 299)
+
+      for (let i = 0; i < topMeteors.length; i++) {
+        topMeteors[i].position.y = meteors_position[i] + (this.audio.frequencyDataArray[100]/255) /(10+Math.random())
+      }
+      for (let i = 0; i < bottomMeteors.length; i++) {
+        bottomMeteors[i].position.y = meteors_position[i] - (this.audio.frequencyDataArray[100]/255) /(10+Math.random())
       }
 
 
