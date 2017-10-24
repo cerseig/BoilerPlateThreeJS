@@ -12,8 +12,11 @@ import OrbitControls from 'three/examples/js/controls/OrbitControls';
 let width = window.innerWidth,
     height = window.innerHeight,
     meteors_array = [],
-    meteors_nb = 300,
-    meteors_position = [],
+    meteors_nb = 500,
+    meteors_x = [],
+    meteors_y = [],
+    meteors_z = [],
+    orbit_margin = 0.3,
     orbit = new THREE.Group()
 
 
@@ -49,7 +52,7 @@ export default class App {
        // ajouter la caméra à la scène
        this.scene.add(this.camera)
 
-       let kernel_shape = new THREE.SphereGeometry(0.05,50, 50)
+       let kernel_shape = new THREE.SphereGeometry(0.08,50, 50)
        let textureLoader = new THREE.TextureLoader();
        let kernel_texture = textureLoader.load(texture7)
        let kernel_material = new THREE.MeshBasicMaterial({color: 0xffffff, map: kernel_texture})
@@ -57,38 +60,38 @@ export default class App {
        // ajouter l'objet à la scène
        this.scene.add( this.kernel )
 
-       let cage_shape = new THREE.IcosahedronGeometry(0.12, 1)
+       let cage_shape = new THREE.IcosahedronGeometry(0.20, 1)
        let cage_material = new THREE.MeshBasicMaterial({color: 0xf2d7dd, wireframe: true})
        this.cage = new THREE.Mesh( cage_shape, cage_material )
        this.scene.add( this.cage )
+
+       this.audio = new Sound( sweetdreams, 102, .3, () => {
+         this.audio.play()
+       }, true )
+       this.kick = this.audio.createKick({
+         frequency: [100, 150],
+         decay: 1,
+         threshold: 0.5,
+         onKick: () => {
+             orbit_margin = 0.4
+         },
+         offKick: () => {
+             orbit_margin = 0.3
+         }
+       })
+       this.kick.on()
 
         for (var i = 0; i < meteors_nb; i++) {
           let meteors_shape = new THREE.TetrahedronGeometry(0.005)
           let meteors_material = new THREE.MeshBasicMaterial({color:0x000000})
           this.meteors = new THREE.Mesh( meteors_shape, meteors_material )
           let random = Math.random() * Math.PI * 2
-          this.meteors.position.set(Math.cos(random) * (0.2 + Math.random() * 0.25), Math.random()*(0.05 - 0) - 0.025, Math.sin(random) * (0.2 + Math.random() * 0.25))
+          this.meteors.position.set(Math.cos(random) * (orbit_margin + Math.random() * 0.6), Math.random()*(0.05 - 0) - 0.025, Math.sin(random) * (orbit_margin + Math.random() * 0.6))
           orbit.add( this.meteors );
           this.scene.add( orbit );
           meteors_array.push( this.meteors )
-          meteors_position.push(this.meteors.position.y)
-        }
-
-        this.audio = new Sound( sweetdreams, 102, .3, () => {
-          this.audio.play()
-        }, true )
-        this.kick = this.audio.createKick({
-          frequency: [100, 150],
-          decay: 1,
-          threshold: 0.5,
-          onKick: () => {
-            cage_material.color.setHex('0xFFFFFF')
-          },
-          offKick: () => {
-            cage_material.color.setHex('0xf2d7dd')
-          }
-        })
-        this.kick.on()
+          meteors_y.push(this.meteors.position.y)
+      }
 
        // initialiser la lumière directionnelle
        this.directionalLight = new THREE.DirectionalLight(0xecbdc6, 1)
@@ -120,16 +123,21 @@ export default class App {
       this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100, 150] / 255)
       orbit.rotation.y += 0.002
 
-      let topMeteors = meteors_array.slice(0, 99)
-      let middleMeteors = meteors_array.slice(100, 199)
-      let bottomMeteors = meteors_array.slice(200, 299)
+    //   for (let i = 0; i < meteors_array.length; i++) {
+    //       meteors_array[i].position.x = meteors_x[i] + 0.1
+    //       meteors_array[i].position.z = meteors_z[i] + 0.1
+    //   }
 
-      for (let i = 0; i < topMeteors.length; i++) {
-        topMeteors[i].position.y = meteors_position[i] + (this.audio.frequencyDataArray[100]/255) /(10+Math.random())
-      }
-      for (let i = 0; i < bottomMeteors.length; i++) {
-        bottomMeteors[i].position.y = meteors_position[i] - (this.audio.frequencyDataArray[100]/255) /(10+Math.random())
-      }
+    //   let topMeteors = meteors_array.slice(0, 99)
+    //   let middleMeteors = meteors_array.slice(100, 199)
+    //   let bottomMeteors = meteors_array.slice(200, 299)
+      //
+    //   for (let i = 0; i < topMeteors.length; i++) {
+    //     topMeteors[i].position.y = meteors_y[i] + (this.audio.frequencyDataArray[100]/255) /(10+Math.random())
+    //   }
+    //   for (let i = 0; i < bottomMeteors.length; i++) {
+    //     bottomMeteors[i].position.y = meteors_y[i] - (this.audio.frequencyDataArray[100]/255) /(10+Math.random())
+    //   }
 
 
 
