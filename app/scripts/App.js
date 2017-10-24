@@ -1,4 +1,6 @@
 import Sound from './Sound';
+import texture7 from './../sources/img/texture7.jpg';
+import texture6 from './../sources/img/texture6.jpg';
 import texture4 from './../sources/img/texture4.jpg';
 import texture3 from './../sources/img/texture3.jpg';
 import sweetdreams from './../sources/sounds/sweetdreams.mp3';
@@ -8,22 +10,14 @@ import OrbitControls from 'three/examples/js/controls/OrbitControls';
 // TODO : add Stats
 
 let width = window.innerWidth,
-    height = window.innerHeight
+    height = window.innerHeight,
+    particles_array = [],
+    light_colors = [0xf2d7dd, 0xece6ed, 0xccd8f2],
+    dark_colors = [0xc5bad0, 0xecbdc6, 0xabb8e3]
 
 export default class App {
 
     constructor() {
-
-        this.audio = new Sound( sweetdreams, 102, .3, () => {
-          this.audio.play()
-        }, true )
-        this.kick = this.audio.createKick({
-          decay: 1,
-          threshold: 0.5,
-          onKick: () => {},
-          offKick: () => {}
-        })
-        this.kick.on()
 
           // initialiser le moteur de rendu
        this.renderer = new THREE.WebGLRenderer()
@@ -43,28 +37,43 @@ export default class App {
 
        let kernel_shape = new THREE.SphereGeometry(0.05,50, 50)
        let textureLoader = new THREE.TextureLoader();
-       let kernel_texture = textureLoader.load(texture3)
+       let kernel_texture = textureLoader.load(texture7)
        let kernel_material = new THREE.MeshBasicMaterial({color: 0xffffff, map: kernel_texture})
        this.kernel = new THREE.Mesh( kernel_shape, kernel_material )
        // ajouter l'objet à la scène
        this.scene.add( this.kernel )
 
        let cage_shape = new THREE.IcosahedronGeometry(0.2, 1)
-       let cage_material = new THREE.MeshBasicMaterial({color: 0xFC9D9A, wireframe: true})
+       let cage_material = new THREE.MeshBasicMaterial({color: 0xf2d7dd, wireframe: true})
        this.cage = new THREE.Mesh( cage_shape, cage_material )
        this.scene.add( this.cage )
 
-    //    let particles_shape = new THREE.DodecahedronGeometry(0.1)
-    //    let particles_material = new THREE.MeshBasicMaterial({color:0x355D7C})
-
         for (var i = 0; i < 300; i++) {
-            console.log('test particles');
+          console.log('test');
             let particles_shape = new THREE.TetrahedronGeometry(0.005)
             let particles_material = new THREE.MeshBasicMaterial({color:0x355D7C})
             this.particles = new THREE.Mesh( particles_shape, particles_material )
-            this.particles.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+            console.log(this.particles);
+            this.particles.position.set(Math.random() - 0.5,Math.random()*(0.1 - 0) - 0.05,Math.random()-0.5)
             this.scene.add( this.particles )
+            particles_array.push( this.particles )
         }
+
+        this.audio = new Sound( sweetdreams, 102, .3, () => {
+          this.audio.play()
+        }, true )
+        this.kick = this.audio.createKick({
+          frequency: [100, 150],
+          decay: 1,
+          threshold: 0.5,
+          onKick: () => {
+            cage_material.color.setHex('0xFFFFFF')
+          },
+          offKick: () => {
+            cage_material.color.setHex('0xf2d7dd')
+          }
+        })
+        this.kick.on()
 
        // initialiser la lumière directionnelle
        this.directionalLight = new THREE.DirectionalLight(0xffffff, 1)
@@ -93,12 +102,9 @@ export default class App {
       this.cage.scale.x =  1 + (this.audio.frequencyDataArray[170]/ 255)
       this.cage.scale.y =  1 + (this.audio.frequencyDataArray[170] / 255)
       this.cage.scale.z =  1 + (this.audio.frequencyDataArray[170] / 255)
-      this.particles.rotation.x += 0.0000;
-      this.particles.rotation.y -= 0.0040;
       this.renderer.clear();
       // on fait le rendu de la scène
       this.renderer.render( this.scene, this.camera )
 
     }
-
 }
