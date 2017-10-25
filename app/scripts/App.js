@@ -76,15 +76,15 @@ export default class App {
             orbit.scale.x = 2
             orbit.scale.y = 2
             orbit.scale.z = 2
-         }).between('after explosion 1', 8.8, 33.4, () => {
+         }).between('after explosion 1', 8.8, 9, () => {
            orbit.scale.x = 1
            orbit.scale.y = 1
            orbit.scale.z = 1
-         }).onceAt('orbit explosion 2', 33.7, () => {
+         }).onceAt('orbit explosion 2', 33.8, () => {
            orbit.scale.x = 2
            orbit.scale.y = 2
            orbit.scale.z = 2
-         }).after('after explosion 2', 34, () => {
+         }).after('after explosion 2', 34.2, () => {
            orbit.scale.x = 1
            orbit.scale.y = 1
            orbit.scale.z = 1
@@ -104,10 +104,19 @@ export default class App {
        this.kick.on()
 
        // set Volume with range input
-       let range = document.getElementById('range')
-       range.addEventListener('change', () => {
+       document.getElementById('range').addEventListener('change', () => {
          let volume_value = document.getElementById('range').value
          this.audio.volume = volume_value
+       })
+
+       //pause control
+       document.getElementById('pause').addEventListener('click', () => {
+         this.audio.pause()
+       })
+
+       //play control
+       document.getElementById('play').addEventListener('click', () => {
+         this.audio.play()
        })
 
 
