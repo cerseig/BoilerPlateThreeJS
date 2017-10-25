@@ -15,13 +15,11 @@ import OrbitControls from 'three/examples/js/controls/OrbitControls';
 let width = window.innerWidth,
     height = window.innerHeight,
     meteors_array = [],
-    meteors_nb = 1500,
     meteors_x = [],
     meteors_y = [],
     meteors_z = [],
     orbit_margin = 0.3,
-    orbit = new THREE.Group(),
-    cage_edge = 1
+    orbit = new THREE.Group()
 
 
 const colors = [0x2B6789, 0xBED6D4, 0xE6D27F]
@@ -39,33 +37,33 @@ export default class App {
 
     constructor() {
 
-          // initialiser le moteur de rendu
-       this.renderer = new THREE.WebGLRenderer({antialias: false, alpha: true})
-       this.renderer.setSize(width, height)
-       this.renderer.setClearColor(0x000000, 0);
-       document.getElementById('main').appendChild(this.renderer.domElement)
+        this.meteors_nb = document.getElementById('range_meteors').value
+        this.cage_edge = document.getElementById('range_edge').value
 
-       // initialiser la scène
-       this.scene = new THREE.Scene()
+        // initialiser le moteur de rendu
+        this.renderer = new THREE.WebGLRenderer({antialias: false, alpha: true})
+        this.renderer.setSize(width, height)
+        this.renderer.setClearColor(0x000000, 0);
+        document.getElementById('main').appendChild(this.renderer.domElement)
 
-       //initialiser la caméra
-       this.camera = new THREE.PerspectiveCamera(50, width/height, 0.1, 2)
-       // placer la caméra
-       this.camera.position.y = 0.2
-       this.camera.position.z = 1
-       // ajouter la caméra à la scène
-       this.scene.add(this.camera)
+        // initialiser la scène
+        this.scene = new THREE.Scene()
 
-       this.createKernel()
-       this.createCage()
+        //initialiser la caméra
+        this.camera = new THREE.PerspectiveCamera(50, width/height, 0.1, 2)
+        // placer la caméra
+        this.camera.position.y = 0.2
+        this.camera.position.z = 1
+        // ajouter la caméra à la scène
+        this.scene.add(this.camera)
 
-       let kernelLight = new THREE.DirectionalLight( 0xBED6D4)
-       kernelLight.position.set( -1, 1, 2 )
-       this.scene.add( kernelLight )
+        this.createKernel()
+        this.createCage()
 
-
-      this.createMeteor()
-
+        let kernelLight = new THREE.DirectionalLight( 0xBED6D4)
+        kernelLight.position.set( -1, 1, 2 )
+        this.scene.add( kernelLight )
+        this.createMeteor()
 
        /* AUDIO */
        this.audio = new Sound( sweetdreams, 102, .3, () => {
@@ -103,23 +101,6 @@ export default class App {
        })
        this.kick.on()
 
-       // set Volume with range input
-       document.getElementById('range').addEventListener('change', () => {
-         let volume_value = document.getElementById('range').value
-         this.audio.volume = volume_value
-       })
-
-       //pause control
-       document.getElementById('pause').addEventListener('click', () => {
-         this.audio.pause()
-       })
-
-       //play control
-       document.getElementById('play').addEventListener('click', () => {
-         this.audio.play()
-       })
-
-
        let OrbitControls;
        OrbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
        OrbitControls.enableZoom = false;
@@ -131,26 +112,62 @@ export default class App {
 
        window.scene = this.scene
        window.THREE = THREE
+
+       this.addListeners();
     }
+
+    addListeners() {
+        // set number of edge from the cage
+        document.getElementById('range_edge').addEventListener('change', () => {
+          this.cage_edge = document.getElementById('range_edge').value
+          this.scene.remove( this.cage )
+          this.createCage()
+        })
+
+        // set number of edge from the cage
+        document.getElementById('range_meteors').addEventListener('change', () => {
+          this.meteors_nb = document.getElementById('range_meteors').value
+          for (var i = 0; i < meteors_array.length; i++) {
+              orbit.remove(meteors_array[i])
+          }
+          this.createMeteor()
+        })
+
+        // set Volume with range input
+        document.getElementById('range_volume').addEventListener('change', () => {
+          this.audio.volume = document.getElementById('range_volume').value
+        })
+
+        // pause control
+        document.getElementById('pause').addEventListener('click', () => {
+          this.audio.pause()
+        })
+
+        // play control
+        document.getElementById('play').addEventListener('click', () => {
+          this.audio.play()
+        })
+    }
+
     createKernel() {
-      let kernel_shape = new THREE.SphereGeometry(0.08,50, 50)
-      let textureLoader = new THREE.TextureLoader();
-      let kernel_texture = textureLoader.load(crater1)
-      let kernel_material = new THREE.MeshLambertMaterial({color: 0xFFFFFF, emissive: 0x0f121a, map: kernel_texture})
-      this.kernel = new THREE.Mesh( kernel_shape, kernel_material )
-      // ajouter l'objet à la scène
-      this.scene.add( this.kernel )
+        let kernel_shape = new THREE.SphereGeometry(0.08,50, 50)
+        let textureLoader = new THREE.TextureLoader();
+        let kernel_texture = textureLoader.load(crater1)
+        let kernel_material = new THREE.MeshLambertMaterial({color: 0xFFFFFF, emissive: 0x0f121a, map:  kernel_texture})
+        this.kernel = new THREE.Mesh( kernel_shape, kernel_material )
+        // ajouter l'objet à la scène
+        this.scene.add( this.kernel )
     }
 
     createCage() {
-      let cage_shape = new THREE.IcosahedronGeometry(0.20, cage_edge)
-      let cage_material = new THREE.MeshBasicMaterial({color: 0xBED6D4, wireframe: true})
-      this.cage = new THREE.Mesh( cage_shape, cage_material )
-      this.scene.add( this.cage )
+        let cage_shape = new THREE.IcosahedronGeometry(0.20, this.cage_edge)
+        let cage_material = new THREE.MeshBasicMaterial({color: 0xBED6D4, wireframe: true})
+        this.cage = new THREE.Mesh( cage_shape, cage_material )
+        this.scene.add( this.cage )
     }
 
     createMeteor() {
-      for (var i = 0; i < meteors_nb; i++) {
+      for (var i = 0; i < this.meteors_nb; i++) {
         let meteors_shape = new THREE.TetrahedronGeometry(0.004, 1)
 
         for ( var j = 0; j < meteors_shape.faces.length; j ++ ) {
@@ -194,9 +211,9 @@ export default class App {
         meteors_array[i].rotation.y += Math.random()/10
       }
 
-      let topMeteors = meteors_array.slice(0, (meteors_nb/3)-1)
-      let middleMeteors = meteors_array.slice(meteors_nb/3, (meteors_nb/3)*2 - 1)
-      let bottomMeteors = meteors_array.slice((meteors_nb/3)*2, (meteors_nb/3)*3 - 1)
+      let topMeteors = meteors_array.slice(0, (this.meteors_nb/3)-1)
+      let middleMeteors = meteors_array.slice(this.meteors_nb/3, (this.meteors_nb/3)*2 - 1)
+      let bottomMeteors = meteors_array.slice((this.meteors_nb/3)*2, (this.meteors_nb/3)*3 - 1)
 
       // let topMeteors = meteors_array.slice(0, 499)
       // let middleMeteors = meteors_array.slice(500, 999)
@@ -215,8 +232,8 @@ export default class App {
       this.renderer.render( this.scene, this.camera )
 
     }
-    onWindowResize() {
 
+    onWindowResize() {
     	this.camera.aspect = window.innerWidth / window.innerHeight;
     	this.camera.updateProjectionMatrix();
     	this.renderer.setSize( window.innerWidth, window.innerHeight );
