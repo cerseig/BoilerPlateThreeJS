@@ -71,11 +71,19 @@ export default class App {
           this.audio.play()
         }, true)
 
-         this.audio.onceAt('start at 4',8.3, () => {
+         this.audio.onceAt('orbit explosion 1',8.3, () => {
             orbit.scale.x = 2
             orbit.scale.y = 2
             orbit.scale.z = 2
-         }).after('after4', 8.6, () => {
+         }).between('after explosion 1', 8.8, 33.4, () => {
+           orbit.scale.x = 1
+           orbit.scale.y = 1
+           orbit.scale.z = 1
+         }).onceAt('orbit explosion 2', 33.7, () => {
+           orbit.scale.x = 2
+           orbit.scale.y = 2
+           orbit.scale.z = 2
+         }).after('after explosion 2', 34, () => {
            orbit.scale.x = 1
            orbit.scale.y = 1
            orbit.scale.z = 1
@@ -86,10 +94,10 @@ export default class App {
          decay: 0.5,
          threshold: 0.5,
          onKick: () => {
-           kernelLight.color.setHex( 0xE6D27F );
+
          },
          offKick: () => {
-           kernelLight.color.setHex( 0xBED6D4 );
+
          }
        })
        this.kick.on()
@@ -98,6 +106,9 @@ export default class App {
        let OrbitControls;
        OrbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
        OrbitControls.enableZoom = false;
+
+       window.addEventListener('resize', this.onWindowResize.bind(this), false);
+        this.onWindowResize();
 
        this.renderer.animate( this.render.bind(this) );
 
@@ -182,5 +193,11 @@ export default class App {
       // on fait le rendu de la scène
       this.renderer.render( this.scene, this.camera )
 
+    }
+    onWindowResize() {
+
+    	this.camera.aspect = window.innerWidth / window.innerHeight;
+    	this.camera.updateProjectionMatrix();
+    	this.renderer.setSize( window.innerWidth, window.innerHeight );
     }
 }
