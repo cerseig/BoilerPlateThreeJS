@@ -20,7 +20,8 @@ let width = window.innerWidth,
     meteors_y = [],
     meteors_z = [],
     orbit_margin = 0.3,
-    orbit = new THREE.Group()
+    orbit = new THREE.Group(),
+    cage_edge = 1
 
 
 const colors = [0x2B6789, 0xBED6D4, 0xE6D27F]
@@ -102,6 +103,13 @@ export default class App {
        })
        this.kick.on()
 
+       // set Volume with range input
+       let range = document.getElementById('range')
+       range.addEventListener('change', () => {
+         let volume_value = document.getElementById('range').value
+         this.audio.volume = volume_value
+       })
+
 
        let OrbitControls;
        OrbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -126,7 +134,7 @@ export default class App {
     }
 
     createCage() {
-      let cage_shape = new THREE.IcosahedronGeometry(0.20, 1)
+      let cage_shape = new THREE.IcosahedronGeometry(0.20, cage_edge)
       let cage_material = new THREE.MeshBasicMaterial({color: 0xBED6D4, wireframe: true})
       this.cage = new THREE.Mesh( cage_shape, cage_material )
       this.scene.add( this.cage )
@@ -161,9 +169,9 @@ export default class App {
       this.kernel.scale.z =  1 + ((this.audio.frequencyDataArray[40] / 255)*1)
       this.cage.rotation.x += 0.005
       this.cage.rotation.y += 0.002
-      this.cage.scale.x =  1 + (this.audio.frequencyDataArray[100, 150]/ 255)
-      this.cage.scale.y =  1 + (this.audio.frequencyDataArray[100, 150] / 255)
-      this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100, 150] / 255)
+      this.cage.scale.x =  1 + (this.audio.frequencyDataArray[100, 150]/ 255) / 2
+      this.cage.scale.y =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
+      this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
       orbit.rotation.y += 0.002
 
       // if(this.audio.frequencyDataArray[100, 150] > 50) {
@@ -177,9 +185,13 @@ export default class App {
         meteors_array[i].rotation.y += Math.random()/10
       }
 
-      let topMeteors = meteors_array.slice(0, 499)
-      let middleMeteors = meteors_array.slice(500, 999)
-      let bottomMeteors = meteors_array.slice(1000, 1499)
+      let topMeteors = meteors_array.slice(0, (meteors_nb/3)-1)
+      let middleMeteors = meteors_array.slice(meteors_nb/3, (meteors_nb/3)*2 - 1)
+      let bottomMeteors = meteors_array.slice((meteors_nb/3)*2, (meteors_nb/3)*3 - 1)
+
+      // let topMeteors = meteors_array.slice(0, 499)
+      // let middleMeteors = meteors_array.slice(500, 999)
+      // let bottomMeteors = meteors_array.slice(1000, 1499)
 
       if (this.audio.frequencyDataArray[170] > 100 || this.audio.frequencyDataArray[170] > 50) {
         for (let i = 0; i < topMeteors.length; i++) {

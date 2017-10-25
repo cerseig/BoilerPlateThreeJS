@@ -8,6 +8,10 @@ html, body {
     background-repeat: no-repeat;
     background-size: cover;
 }
+.panel-controls {
+  position: absolute;
+  background-color: #fff;
+}
 canvas {
     height: 150px;
 }
