@@ -68,7 +68,7 @@ export default class App {
        /* AUDIO */
        this.audio = new Sound( sweetdreams, 102, .3, () => {
           this.audio.play()
-        }, true)
+      }, false)
 
          this.audio.onceAt('orbit explosion 1',8.3, () => {
             orbit.scale.x = 2

@@ -14,8 +14,24 @@ html, body {
     background-repeat: no-repeat;
     background-size: cover;
 }
+.loader {
+    width: 100%;
+    height: 100%;
+    background-color: #0D1C2A;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loader p {
+    text-transform: uppercase;
+    color: #fefefe;
+}
 .landing-gate {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -23,6 +39,39 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #0D1C2A;
+    z-index: 100;
+    text-align: center;
+}
+.landing-gate h1 {
+    color: #FEFEFE;
+    text-transform: uppercase;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-size: 3.5em;
+    letter-spacing: 2px;
+    margin: 0;
+    margin-bottom: 15px;
+}
+.landing-gate h2 {
+    font-family: 'Assistant';
+    font-weight: 200;
+    color: #fefefe;
+    letter-spacing: 2px;
+    margin: 0;
+    font-size: 1em;
+}
+.landing-gate button {
+    margin-top: 100px;
+    background: #fefefe;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    border: none;
+    font-weight: bold;
+    font-family: 'Montserrat';
+    font-size: 1.7em;
+    cursor: pointer;
 }
 .panel-controls {
   position: absolute;
