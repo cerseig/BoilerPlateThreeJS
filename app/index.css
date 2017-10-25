@@ -3,9 +3,10 @@ html, body {
     padding: 0;
     background: #FFF;
     font-family: sans-serif;
-}
-#main {
-  background: #FFF;
+    background-image: url('sources/img/galaxy.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 canvas {
     height: 150px;
