@@ -8,7 +8,7 @@ import App from './scripts/App';
 
 $('#start').on('click', function() {
     $('.landing-gate').css('display', 'none')
-    $('.panel-controls').css('display', 'block')
+    $('.panel-controls').css('display', 'flex')
     window.app = new App();
 })
 window.onload = () => {

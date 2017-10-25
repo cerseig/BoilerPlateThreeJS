@@ -73,9 +73,117 @@ html, body {
     font-size: 1.7em;
     cursor: pointer;
 }
+.landing-gate button:focus {
+    outline: none;
+}
 .panel-controls {
-  position: absolute;
-  background-color: #fff;
+    color: #fefefe;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+}
+#pause, #play {
+    position: absolute;
+    right: 20px;
+    top: 20px
+}
+#play {
+    display: none;
+}
+.panel-controls i {
+    color: #fefefe;
+    opacity: 0.5;
+    font-size: 1.3em;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+.panel-controls i:hover {
+    opacity: 1;
+}
+.panel-controls .edge {
+    margin: 0 50px;
+}
+.panel-controls h4 {
+    font-family: 'Montserrat';
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    margin: 0;
+    margin-top: 20px;
+}
+input[type=range] {
+  	-webkit-appearance: none;
+  	margin: 18px 0;
+ 	width: 100%;
+}
+
+input[type=range]:focus {
+ 	outline: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  	width: 100%;
+  	height: 2px;
+  	cursor: pointer;
+  	animate: 0.2s;
+  	background: #e6e6e6;
+  	border-radius: 20px;
+  	border: 0.2px solid #010101;
+	transition: .2s ease-in-out;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  	height: 14px;
+  	width: 14px;
+  	border-radius: 50px;
+  	background: #808080;
+  	cursor: pointer;
+  	-webkit-appearance: none;
+  	margin-top: calc(-14px / 2);
+	transition: .2s cubic-bezier(.39,.01,.5,5);
+}
+
+input[type=range]:focus::-webkit-slider-thumb {
+	height: 18px;
+  	width: 18px;
+	margin-top: -10px ;
+	transition: .2s cubic-bezier(.39,.01,.5,5);
+    background: #E6D27F;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  	background: #999EAC;
+	transition: .2s ease-in-out;
+}
+
+.swipes-ripple-range {
+	width: 60px;
+	height: 60px;
+	background-color: rgba(#000C2F, 1);
+	border-radius: 50px;
+	position: absolute;
+	top: calc(50% - 30px);
+	left: 0;
+	z-index: -1;
+	transform: scale(0);
+	animation: ripple .3s ease-in-out;
+}
+
+@keyframes ripple {
+	0% {
+		opacity: .4;
+		transform: scale(0);
+	}
+
+	100% {
+		opacity: 0;
+		transform: scale(1);
+	}
+}
+
+#main {
+    margin-top: -80px;
 }
 canvas {
     height: 150px;

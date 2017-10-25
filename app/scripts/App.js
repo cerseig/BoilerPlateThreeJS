@@ -147,6 +147,25 @@ export default class App {
         document.getElementById('play').addEventListener('click', () => {
           this.audio.play()
         })
+
+        $('#pause').on('click', function() {
+            $('#pause').css('display', 'none')
+            $('#play').css('display', 'block')
+        })
+        $('#play').on('click', function() {
+            $('#pause').css('display', 'block')
+            $('#play').css('display', 'none')
+        })
+
+        $('.swipe').mouseup(function() {
+        	$(this).blur();
+        	var sliderVal = $(this).val();
+        	$(this).parent().append('<div class="swipes-ripple-range"></div>');
+        	$(this).siblings('.swipes-ripple-range').css('left', 'calc(' + sliderVal + '% - 30px)').delay(310).queue(function(){
+        		$(this).remove().dequeue();
+        	});
+        })
+
     }
 
     createKernel() {
