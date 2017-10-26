@@ -68,21 +68,21 @@ export default class App {
        /* AUDIO */
        this.audio = new Sound( sweetdreams, 102, .3, () => {
           this.audio.play()
-      }, false)
+      }, true)
 
          this.audio.onceAt('orbit explosion 1',8.3, () => {
             orbit.scale.x = 2
             orbit.scale.y = 2
             orbit.scale.z = 2
-         }).between('after explosion 1', 8.8, 9, () => {
+        }).between('after explosion 1', 8.9, 9, () => {
            orbit.scale.x = 1
            orbit.scale.y = 1
            orbit.scale.z = 1
-         }).onceAt('orbit explosion 2', 33.8, () => {
+       }).onceAt('orbit explosion 2', 33.9, () => {
            orbit.scale.x = 2
            orbit.scale.y = 2
            orbit.scale.z = 2
-         }).after('after explosion 2', 34.2, () => {
+       }).after('after explosion 2', 34.6, () => {
            orbit.scale.x = 1
            orbit.scale.y = 1
            orbit.scale.z = 1
@@ -219,12 +219,6 @@ export default class App {
       this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
       orbit.rotation.y += 0.002
 
-      // if(this.audio.frequencyDataArray[100, 150] > 50) {
-      //   orbit.scale.x = 1 + (this.audio.frequencyDataArray[100, 150]/ 255)
-      //   orbit.scale.y = 1 + (this.audio.frequencyDataArray[100, 150]/ 255)
-      //   orbit.scale.z = 1 + (this.audio.frequencyDataArray[100, 150]/ 255)
-      // }
-
       for (var i = 0; i < meteors_array.length; i++) {
         meteors_array[i].rotation.x += Math.random()/10
         meteors_array[i].rotation.y += Math.random()/10
@@ -234,11 +228,7 @@ export default class App {
       let middleMeteors = meteors_array.slice(this.meteors_nb/3, (this.meteors_nb/3)*2 - 1)
       let bottomMeteors = meteors_array.slice((this.meteors_nb/3)*2, (this.meteors_nb/3)*3 - 1)
 
-      // let topMeteors = meteors_array.slice(0, 499)
-      // let middleMeteors = meteors_array.slice(500, 999)
-      // let bottomMeteors = meteors_array.slice(1000, 1499)
-
-      if (this.audio.frequencyDataArray[170] > 100 || this.audio.frequencyDataArray[170] > 50) {
+      if (this.audio.frequencyDataArray[150] > 100 || this.audio.frequencyDataArray[170] > 50) {
         for (let i = 0; i < topMeteors.length; i++) {
           topMeteors[i].position.y = meteors_y[i] + (this.audio.frequencyDataArray[170]/255) /(10+Math.random())
         }
