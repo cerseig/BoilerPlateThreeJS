@@ -38,6 +38,8 @@ export default class App {
 
     constructor() {
 
+       this.addListeners()
+
         this.meteors_nb = document.getElementById('range_meteors').value
         this.cage_edge = document.getElementById('range_edge').value
 
@@ -71,30 +73,27 @@ export default class App {
           this.audio.play()
       }, true)
 
-      let topMeteors = meteors_array.slice(0, (this.meteors_nb/3)-1)
-      let middleMeteors = meteors_array.slice(this.meteors_nb/3, (this.meteors_nb/3)*2 - 1)
-      let bottomMeteors = meteors_array.slice((this.meteors_nb/3)*2, (this.meteors_nb/3)*3 - 1)
 
-     this.audio.onceAt('orbit explosion 1',8.3, () => {
-       this.updateScale( orbit, { x: 1, y: 1, z: 1 }, { x: 2, y: 2, z: 2 }, 2000, 500, TWEEN.Easing.Linear.None )
-     }).between('after explosion 1', 8.5, 9, () => {
-       this.updateScale( orbit, { x: 2, y: 2, z: 2 }, { x: 1, y: 1, z: 1 }, 0, 500, TWEEN.Easing.Linear.None )
-     }).after('Cage scale', 8.3, () => {
-       this.cage.scale.x =  1 + (this.audio.frequencyDataArray[100, 150]/ 255) / 2
-       this.cage.scale.y =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
-       this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
-     }).after('Meteors jump', 17.2, () => {
-       for (let i = 0; i < topMeteors.length; i++) {
-         topMeteors[i].position.y = meteors_y[i] + (this.audio.frequencyDataArray[170]/255) /(10+Math.random())
-       }
-       for (let i = 0; i < bottomMeteors.length; i++) {
-         bottomMeteors[i].position.y = meteors_y[i] - (this.audio.frequencyDataArray[170]/255) /(20+Math.random())
-       }
-     }).onceAt('orbit explosion 2', 33.9, () => {
-       this.updateScale( orbit, { x: 1, y: 1, z: 1 }, { x: 2, y: 2, z: 2 }, 2000, 500, TWEEN.Easing.Linear.None )
-     }).after('after explosion 2', 34.2, () => {
-       this.updateScale( orbit, { x: 2, y: 2, z: 2 }, { x: 1, y: 1, z: 1 }, 0, 500, TWEEN.Easing.Linear.None )
-     })
+      this.audio.onceAt('orbit explosion 1',8.3, () => {
+        this.updateScale( orbit, { x: 1, y: 1, z: 1 }, { x: 2, y: 2, z: 2 }, 2000, 500, TWEEN.Easing.Linear.None )
+      }).between('after explosion 1', 8.5, 9, () => {
+        this.updateScale( orbit, { x: 2, y: 2, z: 2 }, { x: 1, y: 1, z: 1 }, 0, 500, TWEEN.Easing.Linear.None )
+      }).after('Cage scale', 8.3, () => {
+        this.cage.scale.x =  1 + (this.audio.frequencyDataArray[100, 150]/ 255) / 2
+        this.cage.scale.y =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
+        this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
+      }).after('Meteors jump', 17.2, () => {
+        for (let i = 0; i < this.topMeteors.length; i++) {
+          this.topMeteors[i].position.y = meteors_y[i] + (this.audio.frequencyDataArray[170]/255) /(10+Math.random())
+        }
+        for (let i = 0; i < this.bottomMeteors.length; i++) {
+          this.bottomMeteors[i].position.y = meteors_y[i] - (this.audio.frequencyDataArray[170]/255) /(20+Math.random())
+        }
+      }).onceAt('orbit explosion 2', 33.9, () => {
+        this.updateScale( orbit, { x: 1, y: 1, z: 1 }, { x: 2, y: 2, z: 2 }, 2000, 500, TWEEN.Easing.Linear.None )
+      }).after('after explosion 2', 34.2, () => {
+        this.updateScale( orbit, { x: 2, y: 2, z: 2 }, { x: 1, y: 1, z: 1 }, 0, 500, TWEEN.Easing.Linear.None )
+      })
 
        this.kick = this.audio.createKick({
          frequency: [100, 150],
@@ -120,8 +119,12 @@ export default class App {
 
        window.scene = this.scene
        window.THREE = THREE
+    }
 
-       this.addListeners()
+    decomposeMusic() {
+      this.topMeteors = meteors_array.slice(0, (this.meteors_nb/3)-1)
+      this.middleMeteors = meteors_array.slice(this.meteors_nb/3, (this.meteors_nb/3)*2 - 1)
+      this.bottomMeteors = meteors_array.slice((this.meteors_nb/3)*2, (this.meteors_nb/3)*3 - 1)
     }
 
     updateScale( object, source, target, duration, delay, easing ) {
@@ -152,6 +155,8 @@ export default class App {
           for (var i = 0; i < meteors_array.length; i++) {
               orbit.remove(meteors_array[i])
           }
+          meteors_y = []
+          meteors_array = []
           this.createMeteor()
         })
 
@@ -266,6 +271,7 @@ export default class App {
         meteors_array.push( this.meteors )
         meteors_y.push(this.meteors.position.y)
       }
+        this.decomposeMusic()
     }
 
     render() {
