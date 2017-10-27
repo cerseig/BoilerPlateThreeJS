@@ -5,9 +5,10 @@ import texture6 from './../sources/img/texture6.jpg';
 import texture4 from './../sources/img/texture4.jpg';
 import texture3 from './../sources/img/texture3.jpg';
 import crater1 from './../sources/img/crater1.jpg';
-import crater2 from './../sources/img/crater2.jpg';
+import crater from './../sources/img/crater.jpg';
 import sweetdreams from './../sources/sounds/sweetdreams.mp3';
 import OrbitControls from 'three/examples/js/controls/OrbitControls';
+import TWEEN from 'tween.js/src/Tween.js';
 
 // TODO : add Dat.GUI
 // TODO : add Stats
@@ -70,24 +71,30 @@ export default class App {
           this.audio.play()
       }, true)
 
-         this.audio.onceAt('orbit explosion 1',8.3, () => {
-            // orbit.scale.x = 2
-            // orbit.scale.y = 2
-            // orbit.scale.z = 2
-            this.smoothScale()
-        }).between('after explosion 1', 8.9, 9, () => {
-           orbit.scale.x = 1
-           orbit.scale.y = 1
-           orbit.scale.z = 1
-       }).onceAt('orbit explosion 2', 33.9, () => {
-           orbit.scale.x = 2
-           orbit.scale.y = 2
-           orbit.scale.z = 2
-       }).after('after explosion 2', 34.6, () => {
-           orbit.scale.x = 1
-           orbit.scale.y = 1
-           orbit.scale.z = 1
-         })
+      let topMeteors = meteors_array.slice(0, (this.meteors_nb/3)-1)
+      let middleMeteors = meteors_array.slice(this.meteors_nb/3, (this.meteors_nb/3)*2 - 1)
+      let bottomMeteors = meteors_array.slice((this.meteors_nb/3)*2, (this.meteors_nb/3)*3 - 1)
+
+     this.audio.onceAt('orbit explosion 1',8.3, () => {
+       this.updateScale( orbit, { x: 1, y: 1, z: 1 }, { x: 2, y: 2, z: 2 }, 2000, 500, TWEEN.Easing.Linear.None )
+     }).between('after explosion 1', 8.5, 9, () => {
+       this.updateScale( orbit, { x: 2, y: 2, z: 2 }, { x: 1, y: 1, z: 1 }, 0, 500, TWEEN.Easing.Linear.None )
+     }).after('Cage scale', 8.3, () => {
+       this.cage.scale.x =  1 + (this.audio.frequencyDataArray[100, 150]/ 255) / 2
+       this.cage.scale.y =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
+       this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
+     }).after('Meteors jump', 17.2, () => {
+       for (let i = 0; i < topMeteors.length; i++) {
+         topMeteors[i].position.y = meteors_y[i] + (this.audio.frequencyDataArray[170]/255) /(10+Math.random())
+       }
+       for (let i = 0; i < bottomMeteors.length; i++) {
+         bottomMeteors[i].position.y = meteors_y[i] - (this.audio.frequencyDataArray[170]/255) /(20+Math.random())
+       }
+     }).onceAt('orbit explosion 2', 33.9, () => {
+       this.updateScale( orbit, { x: 1, y: 1, z: 1 }, { x: 2, y: 2, z: 2 }, 2000, 500, TWEEN.Easing.Linear.None )
+     }).after('after explosion 2', 34.2, () => {
+       this.updateScale( orbit, { x: 2, y: 2, z: 2 }, { x: 1, y: 1, z: 1 }, 0, 500, TWEEN.Easing.Linear.None )
+     })
 
        this.kick = this.audio.createKick({
          frequency: [100, 150],
@@ -110,7 +117,6 @@ export default class App {
         this.onWindowResize()
 
        this.renderer.animate( this.render.bind(this) )
-       TWEEN.update()
 
        window.scene = this.scene
        window.THREE = THREE
@@ -118,24 +124,18 @@ export default class App {
        this.addListeners()
     }
 
-    //TWEEN function for smooth effect of meteors
-    smoothScale() {
-        TWEEN.removeAll()
-        new TWEEN.Tween({
-            scale: 1
-        })
-        .to({
-            scale: 2
-        }, 2000 )
-        .easing(
-            TWEEN.Easing.Elastic.InOut
-        )
-        .onUpdate( () => {
-            orbit.scale.x = this.scale
-            orbit.scale.y = this.scale
-            orbit.scale.z = this.scale
-        })
-        .start()
+    updateScale( object, source, target, duration, delay, easing ) {
+        let l_delay = ( delay !== undefined ) ? delay : 0;
+        let l_easing = ( easing !== undefined ) ? easing : TWEEN.Easing.Linear.None;
+
+        new TWEEN.Tween( source )
+            .to( target, duration )
+            .delay( l_delay )
+            .easing( l_easing )
+            .onUpdate( function() { object.scale.copy( target ); } )
+            .start();
+
+            console.log(object.scale.copy( target ));
     }
 
     addListeners() {
@@ -153,6 +153,45 @@ export default class App {
               orbit.remove(meteors_array[i])
           }
           this.createMeteor()
+        })
+
+        // change position of the camera (to the top)
+        document.getElementById('camera1').addEventListener('click', () => {
+          this.scene.remove(this.camera)
+          //initialiser la caméra
+          this.camera = new THREE.PerspectiveCamera(50, width/height, 0.1, 2)
+          // placer la caméra
+          this.camera.position.y = 0.2
+          this.camera.position.z = 1
+          this.camera.rotation.x = -0.2
+          // ajouter la caméra à la scène
+          this.scene.add(this.camera)
+        })
+
+        // change position of the camera (to the top)
+        document.getElementById('camera2').addEventListener('click', () => {
+          this.scene.remove(this.camera)
+          //initialiser la caméra
+          this.camera = new THREE.PerspectiveCamera(50, width/height, 0.1, 2)
+          // placer la caméra
+          this.camera.position.y = 0
+          this.camera.position.z = 1
+          this.camera.rotation.x = 0
+          // ajouter la caméra à la scène
+          this.scene.add(this.camera)
+        })
+
+        // change position of the camera (to the top)
+        document.getElementById('camera3').addEventListener('click', () => {
+          this.scene.remove(this.camera)
+          //initialiser la caméra
+          this.camera = new THREE.PerspectiveCamera(50, width/height, 0.1, 2)
+          // placer la caméra
+          this.camera.position.y = 1
+          this.camera.position.z = 0
+          this.camera.rotation.x = -Math.PI/2
+          // ajouter la caméra à la scène
+          this.scene.add(this.camera)
         })
 
         // set Volume with range input
@@ -193,7 +232,7 @@ export default class App {
     createKernel() {
         let kernel_shape = new THREE.SphereGeometry(0.08,50, 50)
         let textureLoader = new THREE.TextureLoader();
-        let kernel_texture = textureLoader.load(crater1)
+        let kernel_texture = textureLoader.load(crater)
         let kernel_material = new THREE.MeshLambertMaterial({color: 0xFFFFFF, emissive: 0x0f121a, map:  kernel_texture})
         this.kernel = new THREE.Mesh( kernel_shape, kernel_material )
         // ajouter l'objet à la scène
@@ -236,27 +275,12 @@ export default class App {
       this.kernel.scale.z =  1 + ((this.audio.frequencyDataArray[40] / 255)*1)
       this.cage.rotation.x += 0.005
       this.cage.rotation.y += 0.002
-      this.cage.scale.x =  1 + (this.audio.frequencyDataArray[100, 150]/ 255) / 2
-      this.cage.scale.y =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
-      this.cage.scale.z =  1 + (this.audio.frequencyDataArray[100, 150] / 255) / 2
       orbit.rotation.y += 0.002
 
+      // rotation sur elles-même des meteors de l'orbit
       for (var i = 0; i < meteors_array.length; i++) {
         meteors_array[i].rotation.x += Math.random()/10
         meteors_array[i].rotation.y += Math.random()/10
-      }
-
-      let topMeteors = meteors_array.slice(0, (this.meteors_nb/3)-1)
-      let middleMeteors = meteors_array.slice(this.meteors_nb/3, (this.meteors_nb/3)*2 - 1)
-      let bottomMeteors = meteors_array.slice((this.meteors_nb/3)*2, (this.meteors_nb/3)*3 - 1)
-
-      if (this.audio.frequencyDataArray[150] > 100 || this.audio.frequencyDataArray[170] > 50) {
-        for (let i = 0; i < topMeteors.length; i++) {
-          topMeteors[i].position.y = meteors_y[i] + (this.audio.frequencyDataArray[170]/255) /(10+Math.random())
-        }
-        for (let i = 0; i < bottomMeteors.length; i++) {
-          bottomMeteors[i].position.y = meteors_y[i] - (this.audio.frequencyDataArray[170]/255) /(20+Math.random())
-        }
       }
 
       // on fait le rendu de la scène
@@ -265,6 +289,7 @@ export default class App {
     }
 
     onWindowResize() {
+      // responsive interface
     	this.camera.aspect = window.innerWidth / window.innerHeight;
     	this.camera.updateProjectionMatrix();
     	this.renderer.setSize( window.innerWidth, window.innerHeight );

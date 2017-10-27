@@ -14,6 +14,10 @@ html, body {
     background-repeat: no-repeat;
     background-size: cover;
 }
+p {
+  margin: 0;
+  padding: 0;
+}
 .loader {
     width: 100%;
     height: 100%;
@@ -88,6 +92,64 @@ html, body {
     justify-content: center;
     position: relative;
     text-align: center;
+}
+.cameras {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  justify-content: center;
+  align-items: center;
+}
+#camera1, #camera2, #camera3 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 40px;
+  height: 25px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+#camera1:hover:after, #camera2:hover:after, #camera3:hover:after {
+  position: fixed;
+  left: 60px;
+  font-family: 'Montserrat';
+  text-transform: uppercase;
+  font-size: 0.6em;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+#camera1:hover:after {
+  content: 'Initial camera';
+}
+#camera2:hover:after {
+  content: 'Profil camera';
+}
+#camera3:hover:after {
+  content: 'Top camera';
+}
+#camera2 {
+  margin: 10px 0;
+}
+#camera1 .fa, #camera2 .fa, #camera3 .fa {
+  position: absolute;
+  z-index: 1;
+  font-size: 2em;
+  opacity: 0.2;
+  transition: all 0.5s ease;
+}
+#camera1:hover .fa, #camera2:hover .fa, #camera3:hover .fa {
+  opacity: 1;
+  color: #E6D27F;
+}
+#camera1 p, #camera2 p, #camera3 p {
+  position: absolute;
+  z-index: 2;
+  color: #FFF;
+  margin-left: 8px;
+  font-family: 'Montserrat';
+  text-transform: uppercase;
+  font-size: 0.8em;
+  font-weight: bold;
 }
 #pause, #play {
     position: absolute;
