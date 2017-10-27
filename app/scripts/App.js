@@ -71,9 +71,10 @@ export default class App {
       }, true)
 
          this.audio.onceAt('orbit explosion 1',8.3, () => {
-            orbit.scale.x = 2
-            orbit.scale.y = 2
-            orbit.scale.z = 2
+            // orbit.scale.x = 2
+            // orbit.scale.y = 2
+            // orbit.scale.z = 2
+            this.smoothScale()
         }).between('after explosion 1', 8.9, 9, () => {
            orbit.scale.x = 1
            orbit.scale.y = 1
@@ -101,19 +102,40 @@ export default class App {
        })
        this.kick.on()
 
-       let OrbitControls;
-       OrbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-       OrbitControls.enableZoom = false;
+       let OrbitControls
+       OrbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement)
+       OrbitControls.enableZoom = false
 
-       window.addEventListener('resize', this.onWindowResize.bind(this), false);
-        this.onWindowResize();
+       window.addEventListener('resize', this.onWindowResize.bind(this), false)
+        this.onWindowResize()
 
-       this.renderer.animate( this.render.bind(this) );
+       this.renderer.animate( this.render.bind(this) )
+       TWEEN.update()
 
        window.scene = this.scene
        window.THREE = THREE
 
-       this.addListeners();
+       this.addListeners()
+    }
+
+    //TWEEN function for smooth effect of meteors
+    smoothScale() {
+        TWEEN.removeAll()
+        new TWEEN.Tween({
+            scale: 1
+        })
+        .to({
+            scale: 2
+        }, 2000 )
+        .easing(
+            TWEEN.Easing.Elastic.InOut
+        )
+        .onUpdate( () => {
+            orbit.scale.x = this.scale
+            orbit.scale.y = this.scale
+            orbit.scale.z = this.scale
+        })
+        .start()
     }
 
     addListeners() {
