@@ -32,6 +32,7 @@
   "dependencies": {
     "font-awesome": "^4.7.0",
     "gsap": "^1.20.2",
+    "ngrok": "^2.2.23",
     "three": "^0.87.1",
     "tween.js": "^16.6.0",
     "webvr-polyfill": "^0.9.38"
